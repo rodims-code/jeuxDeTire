@@ -1,49 +1,49 @@
-//Nous allos sectionner les element html
+document.addEventListener('DOMContentLoaded', function() {
+    let container = document.querySelector('.container');
+    let scoreContainer = document.querySelector('.score');
+    let timeContainer = document.querySelector('.time');
+    let startButton = document.querySelector('.start-btn');
 
-let container = document.querySelector('.container')
+    startButton.addEventListener('click', function() {
+        let score = 0;
+        let time = 10;
+        container.innerHTML = "";
 
-let btn = document.querySelector('.start-btn')
+        let interval = setInterval(function showTarget() {
+            // Création de la cible
+            let target = document.createElement('img');
+            target.id = "target";
+            target.src = "silly.png";
+            container.appendChild(target);
+            target.style.top = Math.random() * (container.offsetHeight - target.offsetHeight) + 'px';
+            target.style.left = Math.random() * (container.offsetWidth - target.offsetWidth) + 'px';
 
-let scoreContainer = document.querySelector('.score')
+            // Faire disparaître la cible après un certain temps
+            setTimeout(function() {
+                if (container.contains(target)) {
+                    container.removeChild(target);
+                }
+            }, 1000); // La cible disparaît après 1 seconde
+        }, 2000); // Une nouvelle cible apparaît toutes les 2 secondes
 
-let timeContainer = document.querySelector('.time')
+        // Mise à jour du temps et arrêt du jeu après 10 secondes
+        let timer = setInterval(function() {
+            time--;
+            timeContainer.textContent = "Time : " + time;
+            if (time <= 0) {
+                clearInterval(timer);
+                clearInterval(interval);
+                alert("Game Over! Your score is " + score);
+            }
+        }, 1000);
 
-btn = function(){
-    let score = 0;
-    let time = 10;
-    container.innerHTML="";
-
-    let interval = setInterval(function showTarget(){
-        //Creation de la cible
-        let target = document.createElement('img');
-        target.id="target";
-        target.src="silly.png";
-        container.appendChild(target);
-        target.style.top = Math.random() * (500 - target.offsetHeight) + 'px';
-        target.style.left = Math.random() * (600 - target.offsetWidth) + 'px';
-
-        //faire disparaire la cible
-        setTimeout(function(){
-            score += 1;
-            target.remove();
-
-        }, 2000)
-
-        //quand om clique sur le target
-        target.onclick = function(){
-            score += 1 ;
-            target.style.display = 'none';
-        }
-        time -= 1;
-
-        //afficher les infos
-        scoreContainer.innerHTML = `Score : ${score}`
-        timeContainer.innerHTML = `Time : ${time}`
-
-        //fin du jeux quand le tmps est ecouler
-        if(time  == 0){
-            clearInterval(interval);
-            container.innerHTML = "le jeux est terminer !"
-        }
-    }, 1000);
-}
+        // Gestion des clics sur la cible
+        container.addEventListener('click', function(event) {
+            if (event.target.id === 'target') {
+                score++;
+                scoreContainer.textContent = "Score : " + score;
+                container.removeChild(event.target);
+            }
+        });
+    });
+});
